@@ -22446,6 +22446,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("smartCastOnValueBoundToSubjectVariable.kt")
+                public void testSmartCastOnValueBoundToSubjectVariable() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/smartCastOnValueBoundToSubjectVariable.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("smartCastsOnSubjectVariable.kt")
                 public void testSmartCastsOnSubjectVariable() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/smartCastsOnSubjectVariable.kt");
