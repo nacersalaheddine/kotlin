@@ -87,6 +87,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrConstKind.Char -> super.visitConst(expression, context)
             is IrConstKind.Float -> JsDoubleLiteral(kind.valueOf(expression).toDouble())
             is IrConstKind.Double -> JsDoubleLiteral(kind.valueOf(expression))
+            else -> error("")
         }
     }
 
