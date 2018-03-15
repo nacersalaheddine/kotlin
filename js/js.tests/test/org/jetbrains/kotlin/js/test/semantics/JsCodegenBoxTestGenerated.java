@@ -994,6 +994,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/boxingOptimization/foldRange.kt");
         }
 
+        @TestMetadata("forEachInRange.kt")
+        public void testForEachInRange() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/forEachInRange.kt");
+        }
+
         @TestMetadata("intCompareTo.kt")
         public void testIntCompareTo() throws Exception {
             runTest("compiler/testData/codegen/box/boxingOptimization/intCompareTo.kt");

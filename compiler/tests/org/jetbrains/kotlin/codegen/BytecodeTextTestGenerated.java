@@ -513,6 +513,59 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testVariables() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/variables.kt");
         }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/rangeLoopSpecialization")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class RangeLoopSpecialization extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInRangeLoopSpecialization() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxingOptimization/rangeLoopSpecialization"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("intRangeCount.kt")
+            public void testIntRangeCount() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/rangeLoopSpecialization/intRangeCount.kt");
+            }
+
+            @TestMetadata("intRangeFilter.kt")
+            public void testIntRangeFilter() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/rangeLoopSpecialization/intRangeFilter.kt");
+            }
+
+            @TestMetadata("intRangeFold.kt")
+            public void testIntRangeFold() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/rangeLoopSpecialization/intRangeFold.kt");
+            }
+
+            @TestMetadata("intRangeMap.kt")
+            public void testIntRangeMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/rangeLoopSpecialization/intRangeMap.kt");
+            }
+
+            @TestMetadata("longRangeCount.kt")
+            public void testLongRangeCount() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/rangeLoopSpecialization/longRangeCount.kt");
+            }
+
+            @TestMetadata("longRangeFilter.kt")
+            public void testLongRangeFilter() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/rangeLoopSpecialization/longRangeFilter.kt");
+            }
+
+            @TestMetadata("longRangeFold.kt")
+            public void testLongRangeFold() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/rangeLoopSpecialization/longRangeFold.kt");
+            }
+
+            @TestMetadata("longRangeMap.kt")
+            public void testLongRangeMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/rangeLoopSpecialization/longRangeMap.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions")
