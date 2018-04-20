@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import java.util.*
 
 class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
@@ -45,6 +47,8 @@ class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
 
         irFile.declarations.clear()
         irFile.declarations.addAll(classes)
+
+        irFile.acceptVoid(PatchDeclarationParentsVisitor())
     }
 }
 
