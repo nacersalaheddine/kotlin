@@ -8,7 +8,7 @@ plugins {
 dependencies {
     testRuntime(intellijDep())
 
-    compile(projectDist(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib-jdk8"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
@@ -41,7 +41,6 @@ dependencies {
     compile(commonDep("org.jetbrains", "markdown"))
 
     compileOnly(project(":kotlin-daemon-client"))
-
 
     compileOnly(intellijDep())
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
