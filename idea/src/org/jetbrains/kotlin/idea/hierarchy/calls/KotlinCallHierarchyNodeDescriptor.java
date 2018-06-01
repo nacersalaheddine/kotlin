@@ -29,6 +29,7 @@ import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.ui.LayeredIcon;
+import kotlin.streams.StreamsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -36,12 +37,16 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.List;
+
+import static com.intellij.openapi.util.text.StringUtil.defaultIfEmpty;
+import static java.util.stream.Collectors.*;
 
 public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor implements Navigatable {
     private int usageCount = 1;
@@ -180,20 +185,25 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
 
         if (elementText == null) return null;
 
-        String containerText = null;
+
         DeclarationDescriptor containerDescriptor = descriptor.getContainingDeclaration();
-        while (containerDescriptor != null) {
-            if (containerDescriptor instanceof PackageFragmentDescriptor || containerDescriptor instanceof ModuleDescriptor) {
-                break;
-            }
 
-            Name name = containerDescriptor.getName();
-            if (!name.isSpecial()) {
-                String identifier = name.getIdentifier();
-                containerText = containerText != null ? identifier + "." + containerText : identifier;
-            }
+        String containerText = null;
+        if (containerDescriptor != null) {
+            List<DeclarationDescriptor> descriptorsPath =
+                    StreamsKt.asStream(DescriptorUtilsKt.getParentsWithSelf(containerDescriptor))
+                    .collect(toList());
+            Collections.reverse(descriptorsPath);
 
-            containerDescriptor = containerDescriptor.getContainingDeclaration();
+            containerText = descriptorsPath
+                    .stream()
+                    .filter(d -> !(d instanceof PackageFragmentDescriptor || d instanceof ModuleDescriptor))
+                    .map(d -> {
+                        Name name = d.getName();
+                        return name.isSpecial() ? null : name.getIdentifier();
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(collectingAndThen(joining("."), path -> defaultIfEmpty(path, null)));
         }
 
         return containerText != null ? containerText + "." + elementText : elementText;
