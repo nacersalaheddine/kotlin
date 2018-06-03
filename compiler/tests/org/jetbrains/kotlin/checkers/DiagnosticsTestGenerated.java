@@ -10701,6 +10701,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassDeclarationCheck.kt");
             }
 
+            @TestMetadata("inlineClassesInsideAnnotations.kt")
+            public void testInlineClassesInsideAnnotations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassesInsideAnnotations.kt");
+            }
+
             @TestMetadata("presenceOfInitializerBlockInsideInlineClass.kt")
             public void testPresenceOfInitializerBlockInsideInlineClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/presenceOfInitializerBlockInsideInlineClass.kt");

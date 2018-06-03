@@ -11,6 +11,7 @@ import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.text.LiteralFormatUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -782,7 +783,7 @@ private class ConstantExpressionEvaluatorVisitor(
                     AnnotationValue(descriptor).wrap()
                 }
 
-                classDescriptor.isInlineClass() ->
+                classDescriptor.isInlineClass() && UnsignedTypes.isUnsignedClass(classDescriptor) ->
                     createConstantValueForUnsignedTypeConstructor(call, resultingDescriptor, classDescriptor)
 
                 else -> null

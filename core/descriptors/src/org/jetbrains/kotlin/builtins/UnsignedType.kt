@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
+import kotlin.reflect.KClass
 
 
 enum class UnsignedType(val typeName: Name) {
@@ -25,6 +27,9 @@ object UnsignedTypes {
     }
 
     fun isUnsignedClass(descriptor: DeclarationDescriptor): Boolean {
-        return KotlinBuiltIns.isUnderKotlinPackage(descriptor) && UnsignedTypes.unsignedTypeNames.contains(descriptor.name)
+        val container = descriptor.containingDeclaration
+        return container is PackageFragmentDescriptor &&
+                container.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
+                descriptor.name in UnsignedTypes.unsignedTypeNames
     }
 }

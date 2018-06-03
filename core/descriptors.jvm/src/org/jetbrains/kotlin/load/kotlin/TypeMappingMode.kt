@@ -69,7 +69,7 @@ class TypeMappingMode private constructor(
 
         /**
          * kotlin.reflect.KClass mapped to java.lang.Class
-         * primitive types and inline class types are not boxing as types in annotations cannot be nullable
+         * primitive types and inline class types are not boxed because types in annotations cannot be nullable
          * Other types mapped as DEFAULT
          */
         @JvmField
