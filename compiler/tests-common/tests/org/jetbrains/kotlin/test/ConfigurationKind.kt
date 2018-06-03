@@ -21,13 +21,11 @@ enum class ConfigurationKind(
     /** JDK + kotlin runtime + coroutines */
     WITH_COROUTINES(withCoroutines = true, withRuntime = true),
     /** JDK + kotlin runtime + unsigned types */
-    WITH_UNSIGNED_TYPES(withUnsignedTypes = true, withRuntime = true),
+    WITH_UNSIGNED_TYPES(withUnsignedTypes = true, withRuntime = true, withReflection = true),
     /** JDK + kotlin runtime + kotlin reflection */
     WITH_REFLECT(withRuntime = true, withReflection = true),
     /** JDK + kotlin runtime + kotlin reflection + coroutines */
     WITH_COROUTINES_AND_REFLECT(withRuntime = true, withReflection = true, withCoroutines = true),
-    /** JDK + kotlin runtime + unsigned types + kotlin reflection */
-    WITH_UNSIGNED_TYPES_AND_REFLECT(withUnsignedTypes = true, withRuntime = true, withReflection = true),
     /** JDK + kotlin runtime + kotlin reflection + coroutines + unsigned types */
     ALL(withRuntime = true, withReflection = true, withCoroutines = true, withUnsignedTypes = true)
 }

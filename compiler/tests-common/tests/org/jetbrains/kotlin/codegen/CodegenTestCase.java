@@ -720,7 +720,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         return (addReflect && addCoroutines && addUnsignedTypes) ? ConfigurationKind.ALL :
                (addReflect && addCoroutines) ? ConfigurationKind.WITH_COROUTINES_AND_REFLECT :
-               (addReflect && addUnsignedTypes) ? ConfigurationKind.WITH_UNSIGNED_TYPES_AND_REFLECT :
                addReflect ? ConfigurationKind.WITH_REFLECT :
                addCoroutines ? ConfigurationKind.WITH_COROUTINES :
                addUnsignedTypes ? ConfigurationKind.WITH_UNSIGNED_TYPES :
