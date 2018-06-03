@@ -55,5 +55,55 @@ KtFile: UnsignedLiteral.kt
         VALUE_ARGUMENT
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('0b100u')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('3.14')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('1e1')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('1.0e1')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('2_2.0f')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('6.022_137e+2_3f')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
         PsiWhiteSpace('\n')
         PsiElement(RPAR)(')')
