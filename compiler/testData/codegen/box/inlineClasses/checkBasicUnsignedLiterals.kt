@@ -12,5 +12,5 @@ fun box(): String {
     val expected = Int.MAX_VALUE * 2L + 1
     if (max != expected) return "fail"
 
-    return if (u3.toInt() == 3) "OK" else "fail"
+    return "OK"
 }
