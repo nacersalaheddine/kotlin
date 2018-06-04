@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -233,6 +234,8 @@ class ExpressionCodegen(
 
         callGenerator.beforeValueParametersStart()
         val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size)
+        val enumConstructorDefaultArgsShift =
+            if (expression.descriptor is ConstructorDescriptor && isEnumClass(expression.descriptor.containingDeclaration)) 2 else 0
         expression.descriptor.valueParameters.forEachIndexed { i, parameterDescriptor ->
             val arg = expression.getValueArgument(i)
             val parameterType = callable.valueParameterTypes[i]
@@ -248,7 +251,7 @@ class ExpressionCodegen(
                         i,
                         this@ExpressionCodegen
                     )
-                    defaultMask.mark(i)
+                    defaultMask.mark(i - enumConstructorDefaultArgsShift/*TODO switch to separate lower*/)
                 }
                 else -> {
                     assert(parameterDescriptor.varargElementType != null)
