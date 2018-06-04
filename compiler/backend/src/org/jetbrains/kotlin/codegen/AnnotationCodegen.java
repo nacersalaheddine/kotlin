@@ -196,7 +196,7 @@ public abstract class AnnotationCodegen {
         if (TypeUtilsKt.isWrappedNotComputedType(type)) {
             // If type hasn't been yet computed return any annotation as a base clsDelegate that will be corrected
             // when one requests a nullability annotation (see org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation)
-            return NotNull.class;
+            return null;
         }
 
         if (isBareTypeParameterWithNullableUpperBound(type)) {
