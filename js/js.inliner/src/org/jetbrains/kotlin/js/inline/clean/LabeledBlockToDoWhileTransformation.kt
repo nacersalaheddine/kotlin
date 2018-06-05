@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 object LabeledBlockToDoWhileTransformation {
     fun apply(fragments: List<JsProgramFragment>) {
@@ -28,13 +29,73 @@ object LabeledBlockToDoWhileTransformation {
 
     fun apply(root: JsNode) {
         object : JsVisitorWithContextImpl() {
+            val loopStack = mutableListOf<JsStatement>()
+            val newFakeLoops = HashSet<JsDoWhile>()
+
+            // If labeled block sits in between loop and corresponding unlabeled breaks/continues
+            // we have to label this loop, breaks and continues in order to preserve their
+            // relationships across new fake do-while loop
+            val loopsToLabel = HashSet<JsStatement>()
+
             override fun endVisit(x: JsLabel, ctx: JsContext<JsNode>) {
                 if (x.statement is JsBlock) {
-                    x.statement = JsDoWhile(JsBooleanLiteral(false), x.statement)
+                    loopsToLabel.addIfNotNull(loopStack.lastOrNull())
+                    val fakeLoop = JsDoWhile(JsBooleanLiteral(false), x.statement)
+                    newFakeLoops.add(fakeLoop)
+                    x.statement = fakeLoop
                 }
-
                 super.endVisit(x, ctx)
             }
+
+            override fun visit(x: JsWhile, ctx: JsContext<JsNode>) = visitLoop(x)
+            override fun visit(x: JsDoWhile, ctx: JsContext<JsNode>) = visitLoop(x)
+            override fun visit(x: JsFor, ctx: JsContext<JsNode>) = visitLoop(x)
+            override fun visit(x: JsForIn, ctx: JsContext<JsNode>) = visitLoop(x)
+
+            override fun endVisit(x: JsWhile, ctx: JsContext<JsNode>) = endVisitLoop(x, ctx)
+            override fun endVisit(x: JsDoWhile, ctx: JsContext<JsNode>) = endVisitLoop(x, ctx)
+            override fun endVisit(x: JsFor, ctx: JsContext<JsNode>) = endVisitLoop(x, ctx)
+            override fun endVisit(x: JsForIn, ctx: JsContext<JsNode>) = endVisitLoop(x, ctx)
+
+            private fun visitLoop(x: JsStatement): Boolean {
+                loopStack.add(x)
+                return true
+            }
+
+            private fun endVisitLoop(x: JsStatement, ctx: JsContext<JsNode>) {
+                loopStack.removeAt(loopStack.lastIndex)
+                if (loopsToLabel.contains(x)) {
+                    val label = JsScope.declareTemporaryName("loop_label")
+                    labelLoopBreaksAndContinues(x, newFakeLoops, label.makeRef())
+                    ctx.replaceMe(JsLabel(label, x))
+                }
+            }
         }.accept(root)
+    }
+
+    /*
+    Label unlabeled breaks that correspond to current loop.
+    Skip newly created fake do-while loops.
+     */
+    private fun labelLoopBreaksAndContinues(loop: JsStatement, fakeLoops: Set<JsDoWhile>, label: JsNameRef) {
+        object : JsVisitorWithContextImpl() {
+            override fun visit(x: JsWhile, ctx: JsContext<JsNode>): Boolean = visitLoop(x)
+            override fun visit(x: JsDoWhile, ctx: JsContext<JsNode>): Boolean = visitLoop(x)
+            override fun visit(x: JsFor, ctx: JsContext<JsNode>): Boolean = visitLoop(x)
+            override fun visit(x: JsForIn, ctx: JsContext<JsNode>): Boolean = visitLoop(x)
+            private fun visitLoop(x: JsStatement): Boolean = fakeLoops.contains(x) || x === loop
+
+            override fun endVisit(x: JsBreak, ctx: JsContext<JsNode>) {
+                if (x.label == null)
+                    ctx.replaceMe(JsBreak(label))
+                super.endVisit(x, ctx)
+            }
+
+            override fun endVisit(x: JsContinue, ctx: JsContext<JsNode>) {
+                if (x.label == null)
+                    ctx.replaceMe(JsContinue(label))
+                super.endVisit(x, ctx)
+            }
+        }.accept(loop)
     }
 }
