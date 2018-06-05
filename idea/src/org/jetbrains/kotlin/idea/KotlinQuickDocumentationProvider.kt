@@ -20,6 +20,7 @@ import com.google.common.html.HtmlEscapers
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.codeInsight.javadoc.JavaDocInfoGeneratorFactory
 import com.intellij.lang.documentation.AbstractDocumentationProvider
+import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
@@ -269,27 +270,33 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 }
             }
 
-            var renderedDecl = DESCRIPTOR_RENDERER.withOptions {
+            var declaration = DESCRIPTOR_RENDERER.withOptions {
                 withDefinedIn = !DescriptorUtils.isLocal(declarationDescriptor)
             }.render(declarationDescriptor)
 
-            if (!quickNavigation) {
-                renderedDecl = "<pre>$renderedDecl</pre>"
-            }
+
+            var renderedHtml: String
+
+
+
+            //if (!quickNavigation) {
+                renderedHtml = "${DocumentationMarkup.DEFINITION_START}$declaration${DocumentationMarkup.DEFINITION_END}"
+            //}
 
             val deprecationProvider = ktElement.getResolutionFacade().frontendService<DeprecationResolver>()
-            renderedDecl += renderDeprecationInfo(declarationDescriptor, deprecationProvider)
+            renderedHtml += renderDeprecationInfo(declarationDescriptor, deprecationProvider)
 
             if (!quickNavigation) {
                 val comment = declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }
                 if (comment != null) {
                     val renderedComment = KDocRenderer.renderKDoc(comment)
-                    if (renderedComment.startsWith("<p>")) {
-                        renderedDecl += renderedComment
-                    }
-                    else {
-                        renderedDecl = "$renderedDecl<br/>$renderedComment"
-                    }
+                    renderedHtml += "${DocumentationMarkup.CONTENT_START}$renderedComment${DocumentationMarkup.CONTENT_END}"
+//                    if (renderedComment.startsWith("<p>")) {
+//                        renderedHtml += renderedComment
+//                    }
+//                    else {
+//                        renderedHtml = "$renderedHtml<br/>$renderedComment"
+//                    }
                 }
                 else {
                     if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
@@ -299,13 +306,13 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                             val javaDocInfoGenerator = JavaDocInfoGeneratorFactory.create(psi.project, lightElement)
                             val builder = StringBuilder()
                             if (javaDocInfoGenerator.generateDocInfoCore(builder, false))
-                                renderedDecl += builder.toString().substringAfter("</PRE>") // Cut off light method signature
+                                renderedHtml += builder.toString().substringAfter("</PRE>") // Cut off light method signature
                         }
                     }
                 }
             }
 
-            return renderedDecl
+            return renderedHtml
         }
 
         private fun renderDeprecationInfo(
